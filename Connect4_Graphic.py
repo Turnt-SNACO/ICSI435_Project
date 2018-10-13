@@ -16,6 +16,7 @@ Black = (0,0,0)
 Red = (255,0,0)
 Yellow = (255,255,0)
 White = (255,255,255)
+Green = (0,255,0)
 
 def create_board():
     board = np.zeros((Num_Row,Num_Col))
@@ -71,6 +72,29 @@ def winning(board, piece):
             if board[j][i] == piece and board[j-1][i+1] == piece and board[j-2][i+2] == piece and board[j-3][i+3] == piece:
                 return True
 
+def winning_draw(board,piece):
+    for i in range(Num_Col-3):
+        for j in range(Num_Row):
+            if board[j][i] == piece and board[j][i+1] == piece and board[j][i+2] == piece and board[j][i+3] == piece:
+                pygame.draw.line(screen,Green,[int(i*box+box/2),height - int(j*box+box/2)],[int((i+3)*box+box/2),height - int(j*box+box/2)],10)
+    
+    for i in range(Num_Col):
+        for j in range(Num_Row-3):
+            if board[j][i] == piece and board[j+1][i] == piece and board[j+2][i] == piece and board[j+3][i] == piece:
+                pygame.draw.line(screen,Green,[int(i*box+box/2),height - int(j*box+box/2)],[int(i*box+box/2),height - int((j+3)*box+box/2)],10)          
+    
+    for i in range(Num_Col-3): 
+        for j in range(Num_Row-3):
+            if board[j][i] == piece and board[j+1][i+1] == piece and board[j+2][i+2] == piece and board[j+3][i+3] == piece:
+                pygame.draw.line(screen,Green,[int(i*box+box/2),height - int(j*box+box/2)],[int((i+3)*box+box/2),height - int((j+3)*box+box/2)],10)
+                
+    for i in range(Num_Col-3):
+        for j in range(3, Num_Row):
+            if board[j][i] == piece and board[j-1][i+1] == piece and board[j-2][i+2] == piece and board[j-3][i+3] == piece:
+                pygame.draw.line(screen,Green,[int(i*box+box/2),height - int(j*box+box/2)],[int((i+3)*box+box/2),height - int((j-3)*box+box/2)],10)
+    
+    pygame.display.update()
+    
 board = create_board()
 game_over = False
 turn = 0
@@ -87,7 +111,7 @@ screen = pygame.display.set_mode(size)
 draw_board(board)
 pygame.display.update()
 
-myfont = pygame.font.Font('freesansbold.ttf',80)#pygame.font.SysFont("monospace",75)
+myfont = pygame.font.Font('freesansbold.ttf',80)
 
 while not game_over:
     
@@ -130,16 +154,20 @@ while not game_over:
                     
                     if winning(board,2):
                         label = myfont.render("Player2 wins!!",1,White)
+                        pygame.display.update()
                         screen.blit(label,(65,10))
                         print("Player2 wins!")
                         game_over = True
             
             print_board(board)
             draw_board(board)
+            
             turn += 1
             turn = turn % 2
             if game_over:
-                pygame.time.wait(3000)
+                winning_draw(board,1)
+                winning_draw(board,2)
+                pygame.time.wait(5000)
                 pygame.quit()
                 quit()
             
